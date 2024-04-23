@@ -1,0 +1,5 @@
+/html
+/mysql
+/deploy/new/*
+/deploy/old/*
+/site.zone/*.zip
