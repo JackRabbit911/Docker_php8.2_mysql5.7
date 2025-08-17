@@ -17,15 +17,17 @@ RUN apt-get install -y libmagickwand-dev --no-install-recommends
 RUN apt-get install -y libxml2-dev && apt-get clean -y
 
 RUN pecl install -o -f redis &&  rm -rf /tmp/pear &&  docker-php-ext-enable redis
+
 RUN docker-php-ext-install soap
+RUN pecl install memcached-3.2.0 && docker-php-ext-enable memcached
+RUN pecl install memcache-8.2 && docker-php-ext-enable memcache
+
 RUN pecl install imagick && docker-php-ext-enable imagick && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-jpeg
 RUN docker-php-ext-install -j$(nproc) gd
 RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu
 RUN docker-php-ext-install ldap
-RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
-RUN docker-php-ext-install imap
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install gmp
 RUN docker-php-ext-install pdo pdo_mysql mysqli
@@ -44,32 +46,6 @@ RUN docker-php-ext-configure intl
 RUN docker-php-ext-install intl
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
-# PHP ext-memcache
-ARG PHPEXT_MEMCACHE_VERSION=8.2
-RUN set -eux; \
-  persistentDeps=" \
-    libzip4 \
-  "; \
-  buildDeps=" \
-    libzip-dev \
-  "; \
-  DEBIAN_FRONTEND=noninteractive apt-get update; \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ${persistentDeps} \
-    ${buildDeps} \
-  ; \
-  \
-  pecl bundle -d /usr/src/php/ext memcache-${PHPEXT_MEMCACHE_VERSION}; \
-  docker-php-ext-install -j$(nproc) memcache; \
-  \
-  DEBIAN_FRONTEND=noninteractive apt-get purge -y --auto-remove \
-    -o APT::AutoRemove::RecommendsImportant=false \
-    -o APT::AutoRemove::SuggestsImportant=false \
-    ${buildDeps} \
-  ; \
-  docker-php-source delete; \
-  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 RUN pecl install mongodb
 RUN echo "extension=mongodb.so" >> /usr/local/etc/php/php.ini
 RUN docker-php-ext-install -j$(nproc) opcache
@@ -77,3 +53,6 @@ RUN echo 'ServerName localhost:80' >> /etc/apache2/apache2.conf
 RUN a2enmod rewrite
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# RUN mkdir -p /var/www/htdocs/www
+# COPY default.conf /etc/apache2/sites-available/000-default.conf
