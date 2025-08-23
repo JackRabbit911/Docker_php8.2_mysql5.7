@@ -24,7 +24,7 @@ RUN pecl install memcache-8.2 && docker-php-ext-enable memcache
 
 RUN pecl install imagick && docker-php-ext-enable imagick && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-configure gd --with-jpeg
+RUN docker-php-ext-configure gd --with-jpeg --with-freetype
 RUN docker-php-ext-install -j$(nproc) gd
 RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu
 RUN docker-php-ext-install ldap
