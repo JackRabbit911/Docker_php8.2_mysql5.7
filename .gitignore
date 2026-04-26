@@ -1,5 +1,6 @@
 /html/*
 /mysql/*
+/src/*
 /site.zone/*
 /system/*
 .env*
