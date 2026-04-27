@@ -10,7 +10,10 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - "./src/site.zone:/var/www/site.zone"
+<<<<<<< Updated upstream
+=======
+      - "./site.zone:/var/www/site.zone"
+>>>>>>> Stashed changes
     networks:
       - backend
     depends_on:
