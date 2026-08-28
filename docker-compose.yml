@@ -33,6 +33,12 @@ services:
     networks:
       - backend
 
+  memcached:
+    image: memcached:1.6-alpine
+    container_name: my-memcached
+    networks:
+      - backend
+
   fakesmtp:
     image: maildev/maildev
     ports:
